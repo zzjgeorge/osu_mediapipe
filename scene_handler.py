@@ -4,25 +4,23 @@ import time
 
 beatmap = read_beatmap('freedomdive.osu')
 bgm = pyglet.resource.media('freedomdive.mp3')
+hit_sound = pyglet.media.load('hit.wav', streaming=False)
+# hit_sound_player = pyglet.media.Player()
+# hit_sound_player.queue(hit_sound)
+# hit_sound_player.volume = 0.2
 osu_w = 640
 osu_h = 480
 
 WIDTH = 1280
 HEIGHT = 720
 RADIUS = 50
-T_START = -10 # Ellapse time of hitpoints
-T_END = 500
+T_START = -2000 # Ellapse time of hitpoints
+T_END = 5
 
 window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 circle_batch = pyglet.graphics.Batch()
 outer_batch = pyglet.graphics.Batch()
 
-# pts = []
-# for hitpoint in beatmap:
-#     hitpoint['shape'].opacity = 0
-
-# beatmap[0]['shape'].opactiy = 100
-circle = pyglet.shapes.Circle(100, 100, RADIUS, batch=circle_batch)
 start_time = time.time()*1000
 
 i1 = 0
@@ -35,9 +33,11 @@ def update_circle(dt):
         if t < gen_time + T_START:
             break
         elif t > gen_time + T_END:
+            hit_sound.play()
             hitpoint['shape'].delete()
             hitpoint['shape2'].delete()
             i1 += 1
+            print(i1)
             continue
         else:
             x, y = int(hitpoint['x'])/osu_w*WIDTH+100, int(hitpoint['y'])/osu_h*HEIGHT+50
