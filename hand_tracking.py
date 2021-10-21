@@ -9,7 +9,7 @@ mp_hands = mp.solutions.hands
 tip = [1,0,0]
 mcp = [0,0,0]
 # For webcam input:
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 image = cap.read()
 
 def find_finger_pos(dt):
@@ -43,7 +43,7 @@ def find_finger_pos(dt):
                 tip = [hand_landmarks.landmark[8].x, hand_landmarks.landmark[8].y,hand_landmarks.landmark[8].z]
                 mcp = [hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y,hand_landmarks.landmark[0].z]
         # Flip the image horizontally for a selfie-view display.
-        image = cv2.flip(image, 1)
+        # image = cv2.flip(image, 1)
         # cv2.imshow('MediaPipe Hands', image)
         # if cv2.waitKey(5) & 0xFF == 27:
         #     cap.release()
