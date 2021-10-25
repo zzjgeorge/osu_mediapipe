@@ -13,7 +13,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-osu_file_name = 'natsumatsuri'
+osu_file_name = 'freedomdive'
 beatmap = read_beatmap(osu_file_name+'.osu')
 bgm = pyglet.resource.media(osu_file_name+'.mp3')
 hit_sound = pyglet.media.load('hit.wav', streaming=False)
@@ -29,7 +29,7 @@ RADIUS = 50
 T_START = -1500 # Ellapse time of hitpoints
 T_PERFECT = 300 # +/-0.3sec for perfect
 T_GOOD = 800 # +/-0.8sec for good
-T_END = 800
+T_END = 0
 
 window = pyglet.window.Window(width=WIDTH, height=HEIGHT)
 num_batch = pyglet.graphics.Batch()
@@ -83,11 +83,12 @@ def update_circle(dt):
             hitpoint['inner'].delete()
             hitpoint['outer'].delete()
             hitpoint['deleted'] = True
-            # score -= 10
-            hit_label = pyglet.text.Label('MISS',
+            hit_sound.play()
+            score += 100
+            hit_label = pyglet.text.Label('PERFECT',
                                 font_name='Arial', font_size=20, bold=True,
                                 x=x, y=y,
-                                anchor_x='center', anchor_y='center', color=(255, 0, 0, 255))
+                                anchor_x='center', anchor_y='center', color=(0, 255, 0, 255)) # red
             score_label = pyglet.text.Label('Score: '+str(score),
                                     font_name='Arial',
                                     font_size=36,
@@ -98,30 +99,6 @@ def update_circle(dt):
             x, y = int(hitpoint['x'])/osu_w*WIDTH+100, int(hitpoint['y'])/osu_h*HEIGHT+50
             hitpoint['outer'] = pyglet.shapes.Circle(x, y, RADIUS*(1+(gen_time-t)/2000), color=(255, 255, 255), batch=outer_batch)
             hitpoint['inner'] = pyglet.shapes.Circle(x, y, RADIUS, color=(255, 102, 170), batch=circle_batch)
-            if (hit_judge(x, y, left_hand_pos[0], left_hand_pos[1])
-               or hit_judge(x, y, right_hand_pos[0], right_hand_pos[1])):
-                hitpoint['inner'].delete()
-                hitpoint['outer'].delete()
-                hitpoint['deleted'] = True
-                hit_sound.play()
-                if np.abs(gen_time-t) < T_PERFECT:
-                    score += 100
-                    hit_label = pyglet.text.Label('PERFECT',
-                                        font_name='Arial', font_size=20, bold=True,
-                                        x=x, y=y,
-                                        anchor_x='center', anchor_y='center', color=(0, 255, 0, 255)) # red
-                elif np.abs(gen_time-t) < T_GOOD:
-                    score += 50
-                    hit_label = pyglet.text.Label('GOOD',
-                                        font_name='Arial', font_size=20, bold=True,
-                                        x=x, y=y,
-                                        anchor_x='center', anchor_y='center', color=(255, 255, 0, 255)) # yellow
-                else: # OK
-                    score += 20
-                    hit_label = pyglet.text.Label('OK',
-                                        font_name='Arial', font_size=20, bold=True,
-                                        x=x, y=y,
-                                        anchor_x='center', anchor_y='center', color=(185, 214, 255, 255)) #light blue
             score_label = pyglet.text.Label('Score: '+str(score),
                                     font_name='Arial',
                                     font_size=36,
